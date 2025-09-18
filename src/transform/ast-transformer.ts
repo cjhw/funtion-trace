@@ -1,9 +1,9 @@
-import { parse } from '@babel/parser';
-import traverse from '@babel/traverse';
-import generate from '@babel/generator';
-import * as t from '@babel/types';
+import { parse } from "@babel/parser";
+import traverse from "@babel/traverse";
+import generate from "@babel/generator";
+import * as t from "@babel/types";
 
-// 修复 traverse 和 generate 默认导入问题  
+// 修复 traverse 和 generate 默认导入问题
 const traverseDefault = (traverse as any).default || traverse;
 const generateDefault = (generate as any).default || generate;
 import type {
@@ -11,8 +11,8 @@ import type {
   TransformResult,
   PluginOptions,
   FunctionInfo,
-  FunctionType
-} from '../core/types.js';
+  FunctionType,
+} from "../core/types.js";
 
 /**
  * 基于 Babel AST 的代码转换器
@@ -27,7 +27,7 @@ export class ASTCodeTransformer implements ICodeTransformer {
       includeReturnValues: true,
       ignorePatterns: [],
       ignoreFiles: [],
-      ...options
+      ...options,
     };
   }
 
@@ -39,26 +39,26 @@ export class ASTCodeTransformer implements ICodeTransformer {
       if (this.shouldSkipFile(filePath)) {
         return {
           code,
-          transformed: false
+          transformed: false,
         };
       }
 
       // 解析 AST
       const ast = parse(code, {
-        sourceType: 'module',
+        sourceType: "module",
         plugins: [
-          'typescript',
-          'jsx',
-          'decorators-legacy',
-          'classProperties',
-          'objectRestSpread',
-          'asyncGenerators',
-          'dynamicImport',
-          'exportDefaultFrom',
-          'exportNamespaceFrom',
-          'nullishCoalescingOperator',
-          'optionalChaining'
-        ]
+          "typescript",
+          "jsx",
+          "decorators-legacy",
+          "classProperties",
+          "objectRestSpread",
+          "asyncGenerators",
+          "dynamicImport",
+          "exportDefaultFrom",
+          "exportNamespaceFrom",
+          "nullishCoalescingOperator",
+          "optionalChaining",
+        ],
       });
 
       let transformed = false;
@@ -68,7 +68,11 @@ export class ASTCodeTransformer implements ICodeTransformer {
       traverseDefault(ast, {
         // 函数声明
         FunctionDeclaration: (path: any) => {
-          const info = this.extractFunctionInfo(path.node, filePath, 'function-declaration');
+          const info = this.extractFunctionInfo(
+            path.node,
+            filePath,
+            "function-declaration"
+          );
           if (info && this.shouldInstrumentFunction(info)) {
             functionsToInstrument.push(info);
             this.instrumentFunction(path, info);
@@ -76,9 +80,51 @@ export class ASTCodeTransformer implements ICodeTransformer {
           }
         },
 
-        // 函数表达式
+        // 变量声明 - 处理函数表达式和箭头函数
+        VariableDeclarator: (path: any) => {
+          const node = path.node;
+          if (!node.init) return;
+
+          let functionNode = null;
+          let functionType: FunctionType = "function-expression";
+
+          if (t.isFunctionExpression(node.init)) {
+            functionNode = node.init;
+            functionType = "function-expression";
+          } else if (t.isArrowFunctionExpression(node.init)) {
+            functionNode = node.init;
+            functionType = "arrow-function";
+          }
+
+          if (functionNode && t.isIdentifier(node.id)) {
+            const info = this.extractFunctionInfoFromVariable(
+              functionNode,
+              node.id.name,
+              filePath,
+              functionType
+            );
+            if (info && this.shouldInstrumentFunction(info)) {
+              functionsToInstrument.push(info);
+              if (functionType === "arrow-function") {
+                this.instrumentArrowFunction(path.get("init"), info);
+              } else {
+                this.instrumentFunction(path.get("init"), info);
+              }
+              transformed = true;
+            }
+          }
+        },
+
+        // 函数表达式 - 只处理非变量声明的情况
         FunctionExpression: (path: any) => {
-          const info = this.extractFunctionInfo(path.node, filePath, 'function-expression');
+          // 跳过已在 VariableDeclarator 中处理的情况
+          if (path.parentPath?.isVariableDeclarator()) return;
+
+          const info = this.extractFunctionInfo(
+            path.node,
+            filePath,
+            "function-expression"
+          );
           if (info && this.shouldInstrumentFunction(info)) {
             functionsToInstrument.push(info);
             this.instrumentFunction(path, info);
@@ -86,9 +132,16 @@ export class ASTCodeTransformer implements ICodeTransformer {
           }
         },
 
-        // 箭头函数
+        // 箭头函数 - 只处理非变量声明的情况
         ArrowFunctionExpression: (path: any) => {
-          const info = this.extractFunctionInfo(path.node, filePath, 'arrow-function');
+          // 跳过已在 VariableDeclarator 中处理的情况
+          if (path.parentPath?.isVariableDeclarator()) return;
+
+          const info = this.extractFunctionInfo(
+            path.node,
+            filePath,
+            "arrow-function"
+          );
           if (info && this.shouldInstrumentFunction(info)) {
             functionsToInstrument.push(info);
             this.instrumentArrowFunction(path, info);
@@ -108,13 +161,13 @@ export class ASTCodeTransformer implements ICodeTransformer {
 
         // 对象方法
         ObjectMethod: (path: any) => {
-          const info = this.extractFunctionInfo(path.node, filePath, 'method');
+          const info = this.extractFunctionInfo(path.node, filePath, "method");
           if (info && this.shouldInstrumentFunction(info)) {
             functionsToInstrument.push(info);
             this.instrumentFunction(path, info);
             transformed = true;
           }
-        }
+        },
       });
 
       if (transformed) {
@@ -125,37 +178,41 @@ export class ASTCodeTransformer implements ICodeTransformer {
       // 生成代码
       const result = generateDefault(ast, {
         retainLines: true,
-        sourceMaps: true
+        sourceMaps: true,
       });
 
       return {
         code: result.code,
         map: JSON.stringify(result.map),
-        transformed
+        transformed,
       };
-
     } catch (error) {
-      console.warn(`[ASTCodeTransformer] Failed to transform ${filePath}:`, error);
+      console.warn(
+        `[ASTCodeTransformer] Failed to transform ${filePath}:`,
+        error
+      );
       return {
         code,
-        transformed: false
+        transformed: false,
       };
     }
   }
 
   private shouldSkipFile(filePath: string): boolean {
-    return this.options.ignoreFiles?.some(pattern => {
-      if (typeof pattern === 'string') {
-        return filePath.includes(pattern);
-      }
-      return pattern.test(filePath);
-    }) || false;
+    return (
+      this.options.ignoreFiles?.some((pattern) => {
+        if (typeof pattern === "string") {
+          return filePath.includes(pattern);
+        }
+        return pattern.test(filePath);
+      }) || false
+    );
   }
 
   private shouldInstrumentFunction(info: FunctionInfo): boolean {
     if (!this.options.functionMatcher) {
-      return !this.options.ignorePatterns?.some(pattern => {
-        if (typeof pattern === 'string') {
+      return !this.options.ignorePatterns?.some((pattern) => {
+        if (typeof pattern === "string") {
           return info.name.includes(pattern);
         }
         return pattern.test(info.name);
@@ -166,11 +223,11 @@ export class ASTCodeTransformer implements ICodeTransformer {
   }
 
   private extractFunctionInfo(
-    node: t.Function, 
-    filePath: string, 
+    node: t.Function,
+    filePath: string,
     type: FunctionType
   ): FunctionInfo | null {
-    let name = 'anonymous';
+    let name = "anonymous";
 
     if (t.isFunctionDeclaration(node) && node.id) {
       name = node.id.name;
@@ -184,16 +241,34 @@ export class ASTCodeTransformer implements ICodeTransformer {
       location: {
         file: filePath,
         line: node.loc?.start.line || 0,
-        column: node.loc?.start.column || 0
+        column: node.loc?.start.column || 0,
       },
-      node
+      node,
+    };
+  }
+
+  private extractFunctionInfoFromVariable(
+    functionNode: t.Function,
+    variableName: string,
+    filePath: string,
+    type: FunctionType
+  ): FunctionInfo | null {
+    return {
+      name: variableName,
+      type,
+      location: {
+        file: filePath,
+        line: functionNode.loc?.start.line || 0,
+        column: functionNode.loc?.start.column || 0,
+      },
+      node: functionNode,
     };
   }
 
   private extractMethodInfo(path: any, filePath: string): FunctionInfo | null {
     const node = path.node as t.ClassMethod;
-    let name = 'anonymous';
-    let type: FunctionType = 'method';
+    let name = "anonymous";
+    let type: FunctionType = "method";
 
     // 获取方法名
     if (t.isIdentifier(node.key)) {
@@ -203,13 +278,23 @@ export class ASTCodeTransformer implements ICodeTransformer {
     }
 
     // 获取类名
-    let className = 'Unknown';
-    const classNode = path.findParent((p: any) => p.isClassDeclaration() || p.isClassExpression());
+    let className = "Unknown";
+    const classNode = path.findParent(
+      (p: any) => p.isClassDeclaration() || p.isClassExpression()
+    );
     if (classNode) {
       const classDeclaration = classNode.node;
-      if (t.isClassDeclaration(classDeclaration) && classDeclaration.id && t.isIdentifier(classDeclaration.id)) {
+      if (
+        t.isClassDeclaration(classDeclaration) &&
+        classDeclaration.id &&
+        t.isIdentifier(classDeclaration.id)
+      ) {
         className = classDeclaration.id.name;
-      } else if (t.isClassExpression(classDeclaration) && classDeclaration.id && t.isIdentifier(classDeclaration.id)) {
+      } else if (
+        t.isClassExpression(classDeclaration) &&
+        classDeclaration.id &&
+        t.isIdentifier(classDeclaration.id)
+      ) {
         className = classDeclaration.id.name;
       }
     }
@@ -217,13 +302,13 @@ export class ASTCodeTransformer implements ICodeTransformer {
     // 在方法名前加上类名
     name = `${className}.${name}`;
 
-    if (node.kind === 'constructor') {
-      type = 'constructor';
+    if (node.kind === "constructor") {
+      type = "constructor";
       name = `${className}.constructor`;
-    } else if (node.kind === 'get') {
-      type = 'getter';
-    } else if (node.kind === 'set') {
-      type = 'setter';
+    } else if (node.kind === "get") {
+      type = "getter";
+    } else if (node.kind === "set") {
+      type = "setter";
     }
 
     return {
@@ -232,35 +317,37 @@ export class ASTCodeTransformer implements ICodeTransformer {
       location: {
         file: filePath,
         line: node.loc?.start.line || 0,
-        column: node.loc?.start.column || 0
+        column: node.loc?.start.column || 0,
       },
-      node
+      node,
     };
   }
 
   private instrumentFunction(path: any, info: FunctionInfo): void {
     const { node } = path;
-    
+
     // 创建 callId 变量
-    const callIdDeclaration = t.variableDeclaration('const', [
+    const callIdDeclaration = t.variableDeclaration("const", [
       t.variableDeclarator(
-        t.identifier('__callId'),
+        t.identifier("__callId"),
         this.createTracerEnterCall(info)
-      )
+      ),
     ]);
 
     // 创建 try-catch 包装
-    const originalBody = Array.isArray(node.body.body) ? node.body.body : [node.body];
-    
+    const originalBody = Array.isArray(node.body.body)
+      ? node.body.body
+      : [node.body];
+
     const tryBlock = t.blockStatement([
-      ...this.instrumentStatements(originalBody, info)
+      ...this.instrumentStatements(originalBody, info),
     ]);
 
     const catchBlock = t.catchClause(
-      t.identifier('__error'),
+      t.identifier("__error"),
       t.blockStatement([
         this.createTracerErrorCall(),
-        t.throwStatement(t.identifier('__error'))
+        t.throwStatement(t.identifier("__error")),
       ])
     );
 
@@ -276,16 +363,17 @@ export class ASTCodeTransformer implements ICodeTransformer {
     // 如果是表达式体，转换为块语句体
     if (!t.isBlockStatement(node.body)) {
       const expression = node.body;
-      node.body = t.blockStatement([
-        t.returnStatement(expression)
-      ]);
+      node.body = t.blockStatement([t.returnStatement(expression)]);
     }
 
     this.instrumentFunction(path, info);
   }
 
-  private instrumentStatements(statements: t.Statement[], _info: FunctionInfo): t.Statement[] {
-    return statements.map(stmt => {
+  private instrumentStatements(
+    statements: t.Statement[],
+    _info: FunctionInfo
+  ): t.Statement[] {
+    return statements.map((stmt) => {
       if (t.isReturnStatement(stmt)) {
         return this.instrumentReturnStatement(stmt);
       }
@@ -294,17 +382,20 @@ export class ASTCodeTransformer implements ICodeTransformer {
   }
 
   private instrumentReturnStatement(stmt: t.ReturnStatement): t.BlockStatement {
-    const returnValueId = t.identifier('__returnValue');
-    
+    const returnValueId = t.identifier("__returnValue");
+
     const statements: t.Statement[] = [
       // const __returnValue = originalReturnValue;
-      t.variableDeclaration('const', [
-        t.variableDeclarator(returnValueId, stmt.argument ?? t.identifier('undefined'))
+      t.variableDeclaration("const", [
+        t.variableDeclarator(
+          returnValueId,
+          stmt.argument ?? t.identifier("undefined")
+        ),
       ]),
       // __tracer.exit(__callId, __returnValue);
       this.createTracerExitCall(returnValueId),
       // return __returnValue;
-      t.returnStatement(returnValueId)
+      t.returnStatement(returnValueId),
     ];
 
     return t.blockStatement(statements);
@@ -312,57 +403,56 @@ export class ASTCodeTransformer implements ICodeTransformer {
 
   private createTracerEnterCall(info: FunctionInfo): t.CallExpression {
     const metadata = this.createMetadataObject(info);
-    
+
     // 对于箭头函数，需要手动创建参数数组，因为箭头函数没有 arguments 对象
     let argsExpression: t.Expression;
-    if (info.type === 'arrow-function') {
+    if (info.type === "arrow-function") {
       // 为箭头函数创建参数数组 [...arguments] 或 [param1, param2, ...]
       const params = (info.node as t.ArrowFunctionExpression).params;
       if (params.length === 0) {
         argsExpression = t.arrayExpression([]);
       } else {
-        const paramIdentifiers = params.map(param => {
+        const paramIdentifiers = params.map((param) => {
           if (t.isIdentifier(param)) {
             return param;
-          } else if (t.isAssignmentPattern(param) && t.isIdentifier(param.left)) {
+          } else if (
+            t.isAssignmentPattern(param) &&
+            t.isIdentifier(param.left)
+          ) {
             return param.left;
           } else {
-            return t.identifier('undefined'); // 对于复杂参数模式，暂时使用 undefined
+            return t.identifier("undefined"); // 对于复杂参数模式，暂时使用 undefined
           }
         });
         argsExpression = t.arrayExpression(paramIdentifiers);
       }
     } else {
       // 对于普通函数和方法，使用 arguments 对象
-      argsExpression = t.identifier('arguments');
+      argsExpression = t.identifier("arguments");
     }
-    
+
     return t.callExpression(
-      t.memberExpression(
-        t.identifier('__tracer'),
-        t.identifier('enter')
-      ),
+      t.memberExpression(t.identifier("__tracer"), t.identifier("enter")),
       [
-        t.stringLiteral(info.name),           // functionName
-        t.stringLiteral(info.location.file),  // filePath
-        argsExpression,                       // args
-        metadata                              // metadata
+        t.stringLiteral(info.name), // functionName
+        t.stringLiteral(info.location.file), // filePath
+        argsExpression, // args
+        metadata, // metadata
       ]
     );
   }
 
-  private createTracerExitCall(returnValue?: t.Expression): t.ExpressionStatement {
-    const args: (t.Expression | t.SpreadElement)[] = [t.identifier('__callId')];
+  private createTracerExitCall(
+    returnValue?: t.Expression
+  ): t.ExpressionStatement {
+    const args: (t.Expression | t.SpreadElement)[] = [t.identifier("__callId")];
     if (returnValue) {
       args.push(returnValue);
     }
 
     return t.expressionStatement(
       t.callExpression(
-        t.memberExpression(
-          t.identifier('__tracer'),
-          t.identifier('exit')
-        ),
+        t.memberExpression(t.identifier("__tracer"), t.identifier("exit")),
         args
       )
     );
@@ -371,11 +461,8 @@ export class ASTCodeTransformer implements ICodeTransformer {
   private createTracerErrorCall(): t.ExpressionStatement {
     return t.expressionStatement(
       t.callExpression(
-        t.memberExpression(
-          t.identifier('__tracer'),
-          t.identifier('error')
-        ),
-        [t.identifier('__callId'), t.identifier('__error')]
+        t.memberExpression(t.identifier("__tracer"), t.identifier("error")),
+        [t.identifier("__callId"), t.identifier("__error")]
       )
     );
   }
@@ -383,29 +470,40 @@ export class ASTCodeTransformer implements ICodeTransformer {
   private createMetadataObject(info: FunctionInfo): t.ObjectExpression {
     const properties: t.ObjectProperty[] = [
       t.objectProperty(
-        t.identifier('functionType'),
+        t.identifier("functionType"),
         t.stringLiteral(info.type)
       ),
       t.objectProperty(
-        t.identifier('isAsync'),
+        t.identifier("isAsync"),
         t.booleanLiteral(t.isFunction(info.node) && info.node.async === true)
       ),
       t.objectProperty(
-        t.identifier('isGenerator'),
-        t.booleanLiteral(t.isFunction(info.node) && info.node.generator === true)
+        t.identifier("isGenerator"),
+        t.booleanLiteral(
+          t.isFunction(info.node) && info.node.generator === true
+        )
       ),
       t.objectProperty(
-        t.identifier('isMethod'),
-        t.booleanLiteral(info.type === 'method' || info.type === 'constructor')
+        t.identifier("isMethod"),
+        t.booleanLiteral(info.type === "method" || info.type === "constructor")
       ),
       t.objectProperty(
-        t.identifier('location'),
+        t.identifier("location"),
         t.objectExpression([
-          t.objectProperty(t.identifier('file'), t.stringLiteral(info.location.file)),
-          t.objectProperty(t.identifier('line'), t.numericLiteral(info.location.line)),
-          t.objectProperty(t.identifier('column'), t.numericLiteral(info.location.column))
+          t.objectProperty(
+            t.identifier("file"),
+            t.stringLiteral(info.location.file)
+          ),
+          t.objectProperty(
+            t.identifier("line"),
+            t.numericLiteral(info.location.line)
+          ),
+          t.objectProperty(
+            t.identifier("column"),
+            t.numericLiteral(info.location.column)
+          ),
         ])
-      )
+      ),
     ];
 
     return t.objectExpression(properties);
@@ -413,8 +511,13 @@ export class ASTCodeTransformer implements ICodeTransformer {
 
   private addTracerImport(ast: t.File): void {
     const importDeclaration = t.importDeclaration(
-      [t.importSpecifier(t.identifier('__tracer'), t.identifier('globalTracer'))],
-      t.stringLiteral('@function-tracer/runtime')
+      [
+        t.importSpecifier(
+          t.identifier("__tracer"),
+          t.identifier("globalTracer")
+        ),
+      ],
+      t.stringLiteral("@function-tracer/runtime")
     );
 
     // 添加到文件顶部

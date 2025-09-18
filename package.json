@@ -1,0 +1,76 @@
+{
+  "name": "@function-tracer/core",
+  "version": "1.0.0",
+  "description": "跨文件函数调用链路追踪器 - 支持 Rollup 插件",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "eslint src --ext .ts",
+    "example": "cd examples && rollup -c",
+    "prepublishOnly": "pnpm run clean && pnpm run build && pnpm run test:run",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "function-tracer",
+    "call-stack",
+    "performance",
+    "debugging",
+    "rollup-plugin",
+    "cross-file-tracing"
+  ],
+  "author": "Function Tracer Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/babel__generator": "^7.6.0",
+    "@types/babel__traverse": "^7.20.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitest/ui": "^1.0.0",
+    "eslint": "^8.0.0",
+    "rollup": "^4.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/generator": "^7.23.0",
+    "@babel/parser": "^7.23.0",
+    "@babel/traverse": "^7.23.0",
+    "@babel/types": "^7.23.0",
+    "magic-string": "^0.30.0"
+  },
+  "peerDependencies": {
+    "rollup": "^3.0.0 || ^4.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/function-tracer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/function-tracer/issues"
+  },
+  "homepage": "https://github.com/your-org/function-tracer#readme"
+}

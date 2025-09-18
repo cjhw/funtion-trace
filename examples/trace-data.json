@@ -1,0 +1,2737 @@
+{
+  "summary": {
+    "totalCalls": 257,
+    "totalDuration": 206.41783200000006,
+    "averageDuration": 0.8031822256809341,
+    "errorCount": 0,
+    "fileCount": 3
+  },
+  "charts": {
+    "fileCallDistribution": {
+      "title": "文件调用分布",
+      "type": "pie",
+      "data": [
+        {
+          "name": "user.ts",
+          "value": 32,
+          "duration": 203.30350000000004
+        },
+        {
+          "name": "math.ts",
+          "value": 95,
+          "duration": 2.5269610000000426
+        },
+        {
+          "name": "main.ts",
+          "value": 130,
+          "duration": 0.5873710000000187
+        }
+      ]
+    },
+    "fileDurationDistribution": {
+      "title": "文件执行时间分布",
+      "type": "pie",
+      "data": [
+        {
+          "name": "user.ts",
+          "value": "203.30"
+        },
+        {
+          "name": "math.ts",
+          "value": "2.53"
+        },
+        {
+          "name": "main.ts",
+          "value": "0.59"
+        }
+      ]
+    },
+    "topFunctions": {
+      "title": "函数执行时间Top10",
+      "type": "bar",
+      "data": [
+        {
+          "name": "UserService.processUserAsync [user.ts]",
+          "value": "101.44"
+        },
+        {
+          "name": "UserService.processUserAsync [user.ts]",
+          "value": "100.67"
+        },
+        {
+          "name": "Application.getMaxDepthFromHistory [main.ts]",
+          "value": "0.45"
+        },
+        {
+          "name": "UserService.calculateFibonacciScore [user.ts]",
+          "value": "0.34"
+        },
+        {
+          "name": "fibonacci [math.ts]",
+          "value": "0.30"
+        },
+        {
+          "name": "fibonacci [math.ts]",
+          "value": "0.22"
+        },
+        {
+          "name": "UserService.calculateFibonacciScore [user.ts]",
+          "value": "0.19"
+        },
+        {
+          "name": "UserService.updateScore [user.ts]",
+          "value": "0.18"
+        },
+        {
+          "name": "fibonacci [math.ts]",
+          "value": "0.18"
+        },
+        {
+          "name": "fibonacci [math.ts]",
+          "value": "0.13"
+        }
+      ]
+    },
+    "timeline": {
+      "title": "函数调用时间线",
+      "type": "gantt",
+      "data": [
+        {
+          "name": "UserService.addUser",
+          "value": [
+            20.12825,
+            20.201792,
+            0.07354199999999977
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.generateId",
+          "value": [
+            20.147792,
+            20.1675,
+            0.01970800000000139
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.addUser",
+          "value": [
+            20.210292,
+            20.218167,
+            0.007875000000002075
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.generateId",
+          "value": [
+            20.215,
+            20.216042,
+            0.0010420000000017637
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.updateScore",
+          "value": [
+            20.273375,
+            20.452042,
+            0.17866699999999724
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.findUser",
+          "value": [
+            20.386584,
+            20.408709,
+            0.022125000000002615
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            20.404709,
+            20.407,
+            0.002290999999999599
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "MathUtils.add",
+          "value": [
+            20.427167,
+            20.447042,
+            0.019874999999998977
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "UserService.updateScore",
+          "value": [
+            20.455625,
+            20.541542,
+            0.08591699999999847
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.findUser",
+          "value": [
+            20.45775,
+            20.524084,
+            0.06633399999999767
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            20.459917,
+            20.460625,
+            0.0007079999999994868
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            20.51525,
+            20.517292,
+            0.002041999999999433
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "MathUtils.add",
+          "value": [
+            20.527292,
+            20.540334,
+            0.013042000000002218
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "UserService.calculateFibonacciScore",
+          "value": [
+            20.807,
+            20.880375,
+            0.07337500000000219
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.findUser",
+          "value": [
+            20.809084,
+            20.812584,
+            0.003500000000002501
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            20.811209,
+            20.811667,
+            0.0004579999999982931
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.832417,
+            20.865209,
+            0.0327920000000006
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.834792,
+            20.852292,
+            0.017499999999998295
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.836667,
+            20.845459,
+            0.008792000000003242
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.8385,
+            20.842584,
+            0.004083999999998866
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.8475,
+            20.851667,
+            0.004166999999998922
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.854334,
+            20.864584,
+            0.010249999999999204
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.8575,
+            20.861917,
+            0.0044169999999965626
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.multiply",
+          "value": [
+            20.878542,
+            20.8795,
+            0.0009580000000006805
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "UserService.calculateFibonacciScore",
+          "value": [
+            20.882459,
+            21.074209,
+            0.19174999999999898
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.findUser",
+          "value": [
+            20.884375,
+            20.89025,
+            0.005875000000003183
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            20.886417,
+            20.887,
+            0.00058299999999889
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            20.889084,
+            20.889584,
+            0.0004999999999988347
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.89375,
+            21.069667,
+            0.17591699999999832
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.896459,
+            21.008709,
+            0.11224999999999952
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.899542,
+            20.963667,
+            0.06412500000000065
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.900959,
+            20.940792,
+            0.03983299999999801
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.902375,
+            20.929375,
+            0.027000000000001023
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.903875,
+            20.912042,
+            0.008167000000000257
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.905292,
+            20.909542,
+            0.004249999999998977
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.913667,
+            20.9285,
+            0.01483299999999943
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.93225,
+            20.94,
+            0.007750000000001478
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.93375,
+            20.937625,
+            0.003875000000000739
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.942209,
+            20.962917,
+            0.020708000000002613
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.943875,
+            20.951792,
+            0.007917000000002616
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.945417,
+            20.949334,
+            0.003917000000001281
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.957792,
+            20.962,
+            0.004207999999998435
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.965209,
+            21.007917,
+            0.042707999999997526
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.966834,
+            20.997292,
+            0.030458000000002983
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.968417,
+            20.983417,
+            0.015000000000000568
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.97,
+            20.974209,
+            0.004208999999999463
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.985375,
+            20.996084,
+            0.010708999999998525
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            20.999042,
+            21.006959,
+            0.007916999999999064
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.000709,
+            21.004459,
+            0.003750000000000142
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.010167,
+            21.069084,
+            0.058917000000000996
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.011667,
+            21.046084,
+            0.03441700000000125
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.013084,
+            21.0355,
+            0.02241599999999977
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.015667,
+            21.027834,
+            0.01216699999999804
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.017125,
+            21.020959,
+            0.0038340000000012253
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.030292,
+            21.034542,
+            0.004249999999998977
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.03725,
+            21.04525,
+            0.007999999999999119
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.038875,
+            21.042792,
+            0.003916999999997728
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.050584,
+            21.068334,
+            0.01774999999999949
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.052209,
+            21.060167,
+            0.007957999999998577
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.053792,
+            21.057709,
+            0.003916999999997728
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            21.061792,
+            21.067459,
+            0.005666999999998978
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.multiply",
+          "value": [
+            21.072292,
+            21.073125,
+            0.0008330000000000837
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "UserService.processUserAsync",
+          "value": [
+            21.148375,
+            121.819292,
+            100.670917
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.findUser",
+          "value": [
+            21.151,
+            21.15575,
+            0.004750000000001364
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            21.153625,
+            21.154542,
+            0.0009169999999976142
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            21.177959,
+            21.22475,
+            0.04679099999999892
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            21.191834,
+            21.223417,
+            0.03158300000000125
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "UserService.calculateFibonacciScore",
+          "value": [
+            121.749209,
+            121.817875,
+            0.06866600000000744
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.findUser",
+          "value": [
+            121.760459,
+            121.77275,
+            0.012291000000004715
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            121.764375,
+            121.765917,
+            0.0015420000000005984
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            121.780167,
+            121.812709,
+            0.0325419999999923
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            121.782084,
+            121.799834,
+            0.017750000000006594
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            121.783875,
+            121.792917,
+            0.009042000000007988
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            121.785584,
+            121.789959,
+            0.004374999999996021
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            121.794709,
+            121.798917,
+            0.004208000000005541
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            121.801584,
+            121.811792,
+            0.010207999999991557
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            121.8045,
+            121.809084,
+            0.004583999999994148
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.multiply",
+          "value": [
+            121.815625,
+            121.816792,
+            0.001167000000009466
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "UserService.processUserAsync",
+          "value": [
+            121.824167,
+            223.264709,
+            101.44054200000001
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.findUser",
+          "value": [
+            121.826542,
+            121.834417,
+            0.007874999999998522
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            121.828959,
+            121.829917,
+            0.0009579999999971278
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            121.8325,
+            121.833417,
+            0.0009170000000011669
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            121.837084,
+            121.853209,
+            0.016125000000002387
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            121.841334,
+            121.851875,
+            0.010541000000003464
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "UserService.calculateFibonacciScore",
+          "value": [
+            222.925417,
+            223.263,
+            0.3375829999999951
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "UserService.findUser",
+          "value": [
+            222.937292,
+            222.954625,
+            0.017332999999979393
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            222.943042,
+            222.944959,
+            0.0019170000000201526
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            222.951292,
+            222.952292,
+            0.0010000000000047748
+          ],
+          "filePath": "user.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.958584,
+            223.25375,
+            0.2951659999999947
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.960417,
+            223.1835,
+            0.22308300000000258
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.96225,
+            223.050417,
+            0.08816699999999855
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.964042,
+            223.026167,
+            0.062124999999980446
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.965834,
+            222.987292,
+            0.021457999999995536
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.9705,
+            222.979917,
+            0.009417000000013331
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.972292,
+            222.976792,
+            0.004499999999978854
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.981875,
+            222.986292,
+            0.004416999999989457
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.989209,
+            223.024875,
+            0.035666000000020404
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            222.991042,
+            222.997,
+            0.005958000000021002
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.028667,
+            223.049375,
+            0.02070799999998485
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.030667,
+            223.040334,
+            0.00966700000000742
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.032584,
+            223.037417,
+            0.004832999999990761
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.042167,
+            223.04825,
+            0.0060829999999896245
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.052292,
+            223.182459,
+            0.13016700000000014
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.054292,
+            223.094834,
+            0.040541999999987866
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.056084,
+            223.072459,
+            0.016375000000010687
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.057917,
+            223.062709,
+            0.004792000000009011
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.082292,
+            223.089792,
+            0.007499999999993179
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.1015,
+            223.181292,
+            0.07979200000002606
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.10375,
+            223.177709,
+            0.0739590000000021
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.185334,
+            223.252625,
+            0.06729099999998311
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.187167,
+            223.227792,
+            0.040625000000005684
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.189084,
+            223.213042,
+            0.023957999999993262
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.191042,
+            223.2045,
+            0.013457999999985759
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.192959,
+            223.200792,
+            0.007833000000005086
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.206792,
+            223.211917,
+            0.005124999999992497
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.215042,
+            223.2255,
+            0.010457999999999856
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.217125,
+            223.22225,
+            0.005124999999992497
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.229917,
+            223.251292,
+            0.02137500000000614
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.232,
+            223.242625,
+            0.010625000000004547
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.234,
+            223.239334,
+            0.005334000000004835
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "fibonacci",
+          "value": [
+            223.244667,
+            223.249917,
+            0.0052500000000179625
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.multiply",
+          "value": [
+            223.25875,
+            223.260375,
+            0.0016250000000184173
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.power",
+          "value": [
+            223.401167,
+            223.42375,
+            0.022583000000025777
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.power",
+          "value": [
+            223.405167,
+            223.422459,
+            0.017291999999997643
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.power",
+          "value": [
+            223.408,
+            223.421167,
+            0.01316700000000992
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.power",
+          "value": [
+            223.410792,
+            223.419792,
+            0.009000000000014552
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "MathUtils.power",
+          "value": [
+            223.413417,
+            223.417542,
+            0.004124999999987722
+          ],
+          "filePath": "math.ts"
+        },
+        {
+          "name": "Application.countCrossFileCallsFromStats",
+          "value": [
+            224.202584,
+            224.2055,
+            0.0029159999999990305
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "Application.getMaxDepthFromHistory",
+          "value": [
+            224.282875,
+            224.730334,
+            0.44745900000000915
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.304459,
+            224.306292,
+            0.0018330000000048585
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.309792,
+            224.311,
+            0.0012080000000196378
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.317459,
+            224.318625,
+            0.001165999999983569
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.321459,
+            224.322584,
+            0.001125000000001819
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.325209,
+            224.326292,
+            0.001082999999994172
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.328875,
+            224.329917,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.332459,
+            224.3335,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.336,
+            224.337084,
+            0.0010839999999916472
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.339625,
+            224.340667,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.343209,
+            224.344375,
+            0.0011660000000119908
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.346792,
+            224.347834,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.350334,
+            224.351375,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.355167,
+            224.35625,
+            0.001082999999994172
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.363292,
+            224.364875,
+            0.0015830000000107702
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.369917,
+            224.371084,
+            0.001167000000009466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.379709,
+            224.380875,
+            0.0011660000000119908
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.382959,
+            224.384042,
+            0.001082999999994172
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.386,
+            224.387125,
+            0.001125000000001819
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.389084,
+            224.390209,
+            0.001125000000001819
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.392125,
+            224.393209,
+            0.001084000000020069
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.395125,
+            224.396167,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.398084,
+            224.399125,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.40225,
+            224.403334,
+            0.0010839999999916472
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.405292,
+            224.406292,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.408417,
+            224.4095,
+            0.0010830000000225937
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.411417,
+            224.4125,
+            0.001082999999994172
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.414417,
+            224.415459,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.417459,
+            224.418584,
+            0.001125000000001819
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.420542,
+            224.421584,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.423459,
+            224.4245,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.426375,
+            224.427417,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.429292,
+            224.430375,
+            0.001082999999994172
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.43225,
+            224.433292,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.435209,
+            224.43625,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.43925,
+            224.440334,
+            0.001084000000020069
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.44225,
+            224.443292,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.445125,
+            224.446167,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.44825,
+            224.449292,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.451125,
+            224.452125,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.454084,
+            224.455125,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.457042,
+            224.458,
+            0.0009579999999971278
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.459875,
+            224.460917,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.462834,
+            224.463875,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.465792,
+            224.466875,
+            0.001082999999994172
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.468792,
+            224.469834,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.471667,
+            224.472709,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.4755,
+            224.476584,
+            0.0010839999999916472
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.478459,
+            224.479459,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.481292,
+            224.482334,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.484209,
+            224.48525,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.487125,
+            224.488167,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.490042,
+            224.491125,
+            0.0010830000000225937
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.493,
+            224.494084,
+            0.0010839999999916472
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.495959,
+            224.497,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.498875,
+            224.499959,
+            0.0010839999999916472
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.501709,
+            224.50275,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.504667,
+            224.505709,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.507625,
+            224.509584,
+            0.001958999999999378
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.511542,
+            224.512542,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.514417,
+            224.5155,
+            0.001082999999994172
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.517334,
+            224.518375,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.52025,
+            224.521292,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.523209,
+            224.52425,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.526042,
+            224.527084,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.528959,
+            224.53,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.531917,
+            224.532917,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.534625,
+            224.535667,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.537709,
+            224.53875,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.540625,
+            224.541667,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.544625,
+            224.545667,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.547584,
+            224.548625,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.550459,
+            224.5515,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.553417,
+            224.5545,
+            0.001082999999994172
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.556417,
+            224.557459,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.559334,
+            224.560375,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.562209,
+            224.56325,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.565209,
+            224.566209,
+            0.0009999999999763531
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.568084,
+            224.569125,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.571,
+            224.572042,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.573917,
+            224.574959,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.576875,
+            224.577917,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.587167,
+            224.588375,
+            0.0012080000000196378
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.590834,
+            224.592,
+            0.0011660000000119908
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.594125,
+            224.595167,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.597125,
+            224.598209,
+            0.0010839999999916472
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.600084,
+            224.601125,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.603042,
+            224.604084,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.605917,
+            224.606959,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.608959,
+            224.61,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.611917,
+            224.612959,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.614792,
+            224.615834,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.617667,
+            224.618709,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.621875,
+            224.622917,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.624834,
+            224.625875,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.627667,
+            224.628709,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.630542,
+            224.631584,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.633459,
+            224.6345,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.636417,
+            224.637459,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.639292,
+            224.640334,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.642209,
+            224.64325,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.645209,
+            224.646209,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.648125,
+            224.649167,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.65225,
+            224.653292,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.655125,
+            224.656125,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.657917,
+            224.658959,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.660792,
+            224.661834,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.663667,
+            224.664709,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.666584,
+            224.667584,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.669417,
+            224.670459,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.672334,
+            224.673375,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.675167,
+            224.676167,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.678042,
+            224.679084,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.680917,
+            224.681917,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.683709,
+            224.68475,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.687709,
+            224.68875,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.690625,
+            224.691667,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.6935,
+            224.694542,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.696375,
+            224.697417,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.699292,
+            224.700334,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.702167,
+            224.703167,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.705042,
+            224.706042,
+            0.0010000000000047748
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.707917,
+            224.708959,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.710792,
+            224.711834,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.713709,
+            224.71475,
+            0.0010410000000149466
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.716584,
+            224.717625,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.719459,
+            224.7205,
+            0.001040999999986525
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.723292,
+            224.724334,
+            0.0010420000000124219
+          ],
+          "filePath": "main.ts"
+        },
+        {
+          "name": "anonymous",
+          "value": [
+            224.726167,
+            224.727209,
+            0.0010419999999840002
+          ],
+          "filePath": "main.ts"
+        }
+      ]
+    },
+    "depthDistribution": {
+      "title": "调用深度分布",
+      "type": "line",
+      "data": [
+        {
+          "depth": 4,
+          "count": 5
+        },
+        {
+          "depth": 5,
+          "count": 8
+        },
+        {
+          "depth": 6,
+          "count": 5
+        },
+        {
+          "depth": 7,
+          "count": 1
+        },
+        {
+          "depth": 8,
+          "count": 1
+        },
+        {
+          "depth": 10,
+          "count": 1
+        },
+        {
+          "depth": 11,
+          "count": 1
+        },
+        {
+          "depth": 12,
+          "count": 2
+        },
+        {
+          "depth": 13,
+          "count": 3
+        },
+        {
+          "depth": 14,
+          "count": 3
+        },
+        {
+          "depth": 15,
+          "count": 1
+        },
+        {
+          "depth": 16,
+          "count": 1
+        },
+        {
+          "depth": 17,
+          "count": 1
+        },
+        {
+          "depth": 18,
+          "count": 1
+        },
+        {
+          "depth": 19,
+          "count": 1
+        },
+        {
+          "depth": 21,
+          "count": 1
+        },
+        {
+          "depth": 22,
+          "count": 1
+        },
+        {
+          "depth": 23,
+          "count": 1
+        },
+        {
+          "depth": 24,
+          "count": 1
+        },
+        {
+          "depth": 25,
+          "count": 1
+        },
+        {
+          "depth": 26,
+          "count": 1
+        },
+        {
+          "depth": 28,
+          "count": 2
+        },
+        {
+          "depth": 29,
+          "count": 1
+        },
+        {
+          "depth": 30,
+          "count": 1
+        },
+        {
+          "depth": 31,
+          "count": 1
+        },
+        {
+          "depth": 33,
+          "count": 1
+        },
+        {
+          "depth": 34,
+          "count": 1
+        },
+        {
+          "depth": 35,
+          "count": 2
+        },
+        {
+          "depth": 36,
+          "count": 1
+        },
+        {
+          "depth": 37,
+          "count": 1
+        },
+        {
+          "depth": 38,
+          "count": 1
+        },
+        {
+          "depth": 39,
+          "count": 1
+        },
+        {
+          "depth": 41,
+          "count": 1
+        },
+        {
+          "depth": 42,
+          "count": 1
+        },
+        {
+          "depth": 43,
+          "count": 1
+        },
+        {
+          "depth": 44,
+          "count": 1
+        },
+        {
+          "depth": 45,
+          "count": 1
+        },
+        {
+          "depth": 46,
+          "count": 2
+        },
+        {
+          "depth": 47,
+          "count": 4
+        },
+        {
+          "depth": 48,
+          "count": 5
+        },
+        {
+          "depth": 49,
+          "count": 2
+        },
+        {
+          "depth": 50,
+          "count": 1
+        },
+        {
+          "depth": 51,
+          "count": 1
+        },
+        {
+          "depth": 53,
+          "count": 1
+        },
+        {
+          "depth": 54,
+          "count": 2
+        },
+        {
+          "depth": 55,
+          "count": 4
+        },
+        {
+          "depth": 56,
+          "count": 6
+        },
+        {
+          "depth": 57,
+          "count": 3
+        },
+        {
+          "depth": 58,
+          "count": 1
+        },
+        {
+          "depth": 59,
+          "count": 1
+        },
+        {
+          "depth": 60,
+          "count": 1
+        },
+        {
+          "depth": 61,
+          "count": 1
+        },
+        {
+          "depth": 62,
+          "count": 1
+        },
+        {
+          "depth": 64,
+          "count": 1
+        },
+        {
+          "depth": 65,
+          "count": 1
+        },
+        {
+          "depth": 66,
+          "count": 1
+        },
+        {
+          "depth": 67,
+          "count": 1
+        },
+        {
+          "depth": 68,
+          "count": 1
+        },
+        {
+          "depth": 69,
+          "count": 1
+        },
+        {
+          "depth": 71,
+          "count": 2
+        },
+        {
+          "depth": 72,
+          "count": 1
+        },
+        {
+          "depth": 73,
+          "count": 1
+        },
+        {
+          "depth": 74,
+          "count": 1
+        },
+        {
+          "depth": 76,
+          "count": 1
+        },
+        {
+          "depth": 77,
+          "count": 1
+        },
+        {
+          "depth": 78,
+          "count": 2
+        },
+        {
+          "depth": 79,
+          "count": 1
+        },
+        {
+          "depth": 80,
+          "count": 1
+        },
+        {
+          "depth": 81,
+          "count": 1
+        },
+        {
+          "depth": 82,
+          "count": 1
+        },
+        {
+          "depth": 84,
+          "count": 1
+        },
+        {
+          "depth": 85,
+          "count": 1
+        },
+        {
+          "depth": 86,
+          "count": 1
+        },
+        {
+          "depth": 87,
+          "count": 1
+        },
+        {
+          "depth": 88,
+          "count": 2
+        },
+        {
+          "depth": 89,
+          "count": 2
+        },
+        {
+          "depth": 90,
+          "count": 4
+        },
+        {
+          "depth": 91,
+          "count": 130
+        },
+        {
+          "depth": 92,
+          "count": 1
+        }
+      ]
+    }
+  }
+}

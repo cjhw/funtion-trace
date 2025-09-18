@@ -1,0 +1,22 @@
+{
+  "name": "@function-tracer/examples",
+  "version": "1.0.0",
+  "description": "跨文件函数调用追踪演示",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "node dist/bundle.js",
+    "demo": "npm run build && npm run start",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "rollup": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@function-tracer/core": "file:../"
+  }
+}

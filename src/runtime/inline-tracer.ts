@@ -133,6 +133,183 @@ class InlineTracer {
     this.enabled = true;
   }
 
+  // 通用智能父节点查找算法 - 基于调用特征而非硬编码名称
+  private findParentCall(functionName: string, filePath: string, currentTime: number): { parentId: string | null, depth: number } {
+    if (this.callStack.length === 0) {
+      return { parentId: null, depth: 0 };
+    }
+
+    // 1. 直接父子关系检测（时空邻近性）
+    const directParent = this.findDirectParent(functionName, filePath, currentTime);
+    if (directParent) {
+      return { parentId: directParent.id, depth: directParent.depth + 1 };
+    }
+
+    // 2. 递归模式检测和跳过
+    const nonRecursiveParent = this.findNonRecursiveParent(functionName, filePath);
+    if (nonRecursiveParent) {
+      return { parentId: nonRecursiveParent.id, depth: nonRecursiveParent.depth + 1 };
+    }
+
+    // 3. 异步调用边界检测
+    const asyncParent = this.findAsyncBoundaryParent(currentTime);
+    if (asyncParent) {
+      return { parentId: asyncParent.id, depth: asyncParent.depth + 1 };
+    }
+
+    // 4. 跨模块调用检测
+    const crossModuleParent = this.findCrossModuleParent(filePath);
+    if (crossModuleParent) {
+      return { parentId: crossModuleParent.id, depth: crossModuleParent.depth + 1 };
+    }
+
+    // 5. 回退策略 - 使用最近的非递归调用
+    const fallbackParent = this.findFallbackParent(functionName);
+    if (fallbackParent) {
+      return { parentId: fallbackParent.id, depth: fallbackParent.depth + 1 };
+    }
+
+    // 6. 最终回退 - 使用栈顶
+    const topCall = this.callStack[this.callStack.length - 1];
+    return { parentId: topCall?.id || null, depth: (topCall?.depth || 0) + 1 };
+  }
+
+  // 检测直接父子关系（时间和空间邻近性）
+  private findDirectParent(functionName: string, filePath: string, currentTime: number): CallRecord | null {
+    console.log(functionName);
+    
+    const topCall = this.callStack[this.callStack.length - 1];
+    if (!topCall || topCall.status !== "active") return null;
+
+    const timeDiff = currentTime - topCall.startTime;
+    const isSameFile = topCall.filePath === filePath;
+    const isShortInterval = timeDiff < 50; // 50ms内认为是直接调用
+
+    // 同文件且时间间隔很短 = 直接父子关系
+    if (isSameFile && isShortInterval) {
+      return topCall;
+    }
+
+    return null;
+  }
+
+  // 查找非递归父调用（基于调用模式识别递归）
+  private findNonRecursiveParent(functionName: string, filePath: string): CallRecord | null {
+    // 检测是否可能是递归调用（函数名相同且文件相同）
+    const isLikelyRecursive = this.isLikelyRecursiveCall(functionName, filePath);
+    
+    if (!isLikelyRecursive) {
+      // 对于非递归调用，跳过相同函数名的调用找到真正的调用者
+      return this.findNonSameFunctionParent(functionName);
+    }
+
+    return null;
+  }
+
+  // 检测是否可能是递归调用
+  private isLikelyRecursiveCall(functionName: string, filePath: string): boolean {
+    // 检查调用栈中是否有相同函数名且文件相同的调用
+    let sameNameCount = 0;
+    for (const call of this.callStack) {
+      if (call.name === functionName && call.filePath === filePath && call.status === "active") {
+        sameNameCount++;
+        if (sameNameCount >= 3) { // 3层以上相同调用认为是递归
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  // 查找非同名函数的父调用
+  private findNonSameFunctionParent(functionName: string): CallRecord | null {
+    for (let i = this.callStack.length - 1; i >= 0; i--) {
+      const call = this.callStack[i];
+      if (call && call.status === "active" && call.name !== functionName) {
+        return call;
+      }
+    }
+    return null;
+  }
+
+  // 异步调用边界检测（基于时间间隔）
+  private findAsyncBoundaryParent(currentTime: number): CallRecord | null {
+    for (let i = this.callStack.length - 1; i >= 0; i--) {
+      const call = this.callStack[i];
+      if (call && call.status === "active") {
+        const timeDiff = currentTime - call.startTime;
+        
+        // 时间间隔很长，可能跨越了异步边界
+        if (timeDiff > 100) {
+          // 检查是否是异步函数（包含 Async 或 async 关键字）
+          if (this.isAsyncFunction(call.name)) {
+            return call;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // 检测是否是异步函数
+  private isAsyncFunction(functionName: string): boolean {
+    const asyncPatterns = ['Async', 'async', 'Promise', 'await'];
+    return asyncPatterns.some(pattern => functionName.includes(pattern));
+  }
+
+  // 跨模块调用检测（基于文件路径差异）
+  private findCrossModuleParent(filePath: string): CallRecord | null {
+    for (let i = this.callStack.length - 1; i >= 0; i--) {
+      const call = this.callStack[i];
+      if (call && call.status === "active") {
+        // 如果文件不同，可能是跨模块调用
+        if (call.filePath !== filePath) {
+          // 进一步检查是否是合理的跨模块调用
+          if (this.isReasonableCrossModuleCall(call.filePath, filePath)) {
+            return call;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  // 检测是否是合理的跨模块调用
+  private isReasonableCrossModuleCall(parentFile: string, childFile: string): boolean {
+    // 基于文件层次结构判断
+    const parentParts = parentFile.split('/');
+    const childParts = childFile.split('/');
+    
+    // 同一目录下的文件更可能有调用关系
+    const sameDir = parentParts.slice(0, -1).join('/') === childParts.slice(0, -1).join('/');
+    
+    // 或者是从上层目录调用下层目录
+    const parentIsHigher = parentParts.length < childParts.length;
+    
+    return sameDir || parentIsHigher;
+  }
+
+  // 回退策略：找到最近的不同类型调用
+  private findFallbackParent(functionName: string): CallRecord | null {
+    // 优先选择不同函数名的调用
+    for (let i = this.callStack.length - 1; i >= 0; i--) {
+      const call = this.callStack[i];
+      if (call && call.status === "active" && call.name !== functionName) {
+        return call;
+      }
+    }
+    
+    // 如果都是同名函数，选择最老的那个（可能是最初的调用者）
+    for (let i = 0; i < this.callStack.length; i++) {
+      const call = this.callStack[i];
+      if (call && call.status === "active") {
+        return call;
+      }
+    }
+    
+    return null;
+  }
+
   enter(
     functionName: string,
     filePath: string,
@@ -144,15 +321,11 @@ class InlineTracer {
     const callId = `call_${performance.now().toString(36)}_${Math.random()
       .toString(36)
       .substring(2, 8)}`;
-    // 获取当前活跃的父调用（最后一个未完成的调用）
-    let parentId: string | null = null;
-    for (let i = this.callStack.length - 1; i >= 0; i--) {
-      const call = this.callStack[i];
-      if (call && call.status === "active") {
-        parentId = call.id;
-        break;
-      }
-    }
+    
+    const currentTime = performance.now();
+    
+    // 使用通用智能父节点查找算法
+    const { parentId, depth } = this.findParentCall(functionName, filePath, currentTime);
 
     const record: CallRecord = {
       id: callId,
@@ -161,13 +334,14 @@ class InlineTracer {
       filePath,
       args: Array.isArray(args) ? args : Array.from(args),
       status: "active",
-      depth: this.currentDepth,
-      startTime: performance.now(),
+      depth: depth,
+      startTime: currentTime,
       parentId,
       childrenIds: [],
       metadata,
     };
 
+    // 更新父调用的子调用列表
     if (parentId) {
       const parent = this.callStack.find((call) => call.id === parentId);
       if (parent && parent.childrenIds) {
@@ -176,7 +350,7 @@ class InlineTracer {
     }
 
     this.callStack.push(record);
-    this.currentDepth++;
+    this.currentDepth = Math.max(this.currentDepth, depth);
     return callId;
   }
 
@@ -184,97 +358,124 @@ class InlineTracer {
     if (!callId || !this.enabled) return;
 
     const endTime = performance.now();
-    const callIndex = this.callStack.findIndex((call) => call.id === callId);
+    
+    // 优先查找调用栈顶部，因为正常情况下应该是LIFO顺序
+    let callIndex = -1;
+    
+    // 先检查栈顶是否是要退出的调用（最常见情况）
+    if (this.callStack.length > 0 && this.callStack[this.callStack.length - 1]?.id === callId) {
+      callIndex = this.callStack.length - 1;
+    } else {
+      // 如果不是栈顶，则在整个调用栈中查找
+      callIndex = this.callStack.findIndex((call) => call.id === callId);
+    }
+    
+    if (callIndex !== -1) {
+      // 在调用栈中找到了调用记录
+      const record = this.callStack[callIndex];
+      if (!record) return;
 
-    if (callIndex === -1) {
-      // 如果在调用栈中找不到，可能已经在历史记录中了（异步调用的情况）
-      const historyRecord = this.callHistory.find((call) => call.id === callId);
-      if (historyRecord && historyRecord.status === "active") {
-        historyRecord.endTime = endTime;
-        historyRecord.duration = endTime - historyRecord.startTime;
-        historyRecord.status = "completed";
-        historyRecord.returnValue = returnValue;
-        this.updateFileStats(historyRecord);
+      record.endTime = endTime;
+      record.duration = endTime - record.startTime;
+      record.status = "completed";
+      record.returnValue = returnValue;
+
+      // 从调用栈移除并添加到历史记录
+      this.callStack.splice(callIndex, 1);
+      this.callHistory.push(record);
+      this.updateFileStats(record);
+      
+      // 调整当前深度
+      if (this.callStack.length === 0) {
+        this.currentDepth = 0;
+      } else {
+        this.currentDepth = Math.max(...this.callStack.map(c => c.depth), 0);
       }
+      
       return;
     }
-
-    const record = this.callStack[callIndex];
-    if (!record) return;
-
-    record.endTime = endTime;
-    record.duration = endTime - record.startTime;
-    record.status = "completed";
-    record.returnValue = returnValue;
-
-    // 对于异步调用，不要立即从调用栈中移除，而是标记为完成
-    // 只有当它是栈顶元素时才移除（保持 LIFO 特性）
-    if (callIndex === this.callStack.length - 1) {
-      this.callStack.splice(callIndex, 1);
-      this.currentDepth--;
-    } else {
-      // 异步调用：保留在栈中但标记为完成，稍后清理
-      console.log(`🔄 异步调用完成，保留在栈中: ${record.name}(${callId})`);
+    
+    // 如果在调用栈中找不到，查找历史记录（处理异步调用完成的情况）
+    const historyRecord = this.callHistory.find((call) => call.id === callId);
+    if (historyRecord && historyRecord.status === "active") {
+      historyRecord.endTime = endTime;
+      historyRecord.duration = endTime - historyRecord.startTime;
+      historyRecord.status = "completed";
+      historyRecord.returnValue = returnValue;
+      this.updateFileStats(historyRecord);
+      return;
     }
-
-    this.callHistory.push(record);
-    this.updateFileStats(record);
-
-    // 清理已完成的连续栈顶元素
-    this.cleanupCompletedCalls();
-  }
-
-  private cleanupCompletedCalls(): void {
-    // 从栈顶开始，移除所有已完成的连续调用
-    // 但要确保不会过度清理，保留可能还有子调用的父调用
-    while (this.callStack.length > 0) {
-      const topCall = this.callStack[this.callStack.length - 1];
-      if (topCall && topCall.status === "completed") {
-        // 检查是否还有其他调用引用这个父调用
-        const hasChildren = this.callStack.some(
-          (call) => call.status === "active" && call.parentId === topCall.id
-        );
-
-        if (!hasChildren) {
-          this.callStack.pop();
-          this.currentDepth--;
-          console.log(`🧹 清理已完成的调用: ${topCall.name}(${topCall.id})`);
-        } else {
-          console.log(
-            `🔒 保留父调用: ${topCall.name}(${topCall.id}) - 仍有活跃子调用`
-          );
-          break;
-        }
-      } else {
-        break;
-      }
-    }
+    
+    // 如果都找不到，可能是深层递归调用顺序问题，创建一个补充记录
+    console.warn(`[InlineTracer] 调用记录未找到，创建补充记录: ${callId}`);
+    
+    // 尝试从callId推断一些信息（如果可能的话）
+    const supplementRecord: CallRecord = {
+      id: callId,
+      name: "unknown",
+      fullPath: "unknown",
+      filePath: "unknown",
+      args: [],
+      status: "completed",
+      depth: this.currentDepth,
+      startTime: endTime - 1, // 假设执行了1ms
+      endTime: endTime,
+      duration: 1,
+      parentId: this.callStack.length > 0 ? this.callStack[this.callStack.length - 1]?.id || null : null,
+      childrenIds: [],
+      returnValue: returnValue,
+    };
+    
+    this.callHistory.push(supplementRecord);
+    this.updateFileStats(supplementRecord);
   }
 
   error(callId: string, error: Error): void {
     if (!callId || !this.enabled) return;
 
     const endTime = performance.now();
+    
+    // 在调用栈中查找
     const callIndex = this.callStack.findIndex((call) => call.id === callId);
+    if (callIndex !== -1) {
+      const record = this.callStack[callIndex];
+      if (!record) return;
 
-    if (callIndex === -1) return;
+      record.endTime = endTime;
+      record.duration = endTime - record.startTime;
+      record.status = "error";
+      record.error = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack || "",
+      };
 
-    const record = this.callStack[callIndex];
-    if (!record) return;
-
-    record.endTime = endTime;
-    record.duration = endTime - record.startTime;
-    record.status = "error";
-    record.error = {
-      name: error.name,
-      message: error.message,
-      stack: error.stack || "",
-    };
-
-    this.callStack.splice(callIndex, 1);
-    this.callHistory.push(record);
-    this.currentDepth--;
-    this.updateFileStats(record);
+      this.callStack.splice(callIndex, 1);
+      this.callHistory.push(record);
+      this.updateFileStats(record);
+      
+      // 调整当前深度
+      if (this.callStack.length === 0) {
+        this.currentDepth = 0;
+      } else {
+        this.currentDepth = Math.max(...this.callStack.map(c => c.depth), 0);
+      }
+      return;
+    }
+    
+    // 在历史记录中查找
+    const historyRecord = this.callHistory.find((call) => call.id === callId);
+    if (historyRecord && historyRecord.status === "active") {
+      historyRecord.endTime = endTime;
+      historyRecord.duration = endTime - historyRecord.startTime;
+      historyRecord.status = "error";
+      historyRecord.error = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack || "",
+      };
+      this.updateFileStats(historyRecord);
+    }
   }
 
   getHistory(): CallRecord[] {
@@ -335,40 +536,45 @@ class InlineTracer {
     }
   }
 
-  // 构建调用树结构 - 创建真正的函数调用树
-  private buildCallTree(): TreeNode[] {
-    // 获取完整的调用记录（包括调用栈中未完成的调用）
+  // 构建真正准确的调用树结构
+  buildCallTree(): TreeNode[] {
+    // 收集所有调用记录（已完成的和正在进行的）
     const allRecords = [...this.callHistory];
-
-    // 添加调用栈中仍在进行的调用（可能是异步调用）
+    
+    // 添加仍在调用栈中的记录（未完成的调用）
     for (const stackRecord of this.callStack) {
       if (!allRecords.find((r) => r.id === stackRecord.id)) {
         allRecords.push({
           ...stackRecord,
           endTime: stackRecord.endTime || performance.now(),
-          duration:
-            stackRecord.duration || performance.now() - stackRecord.startTime,
+          duration: stackRecord.duration || performance.now() - stackRecord.startTime,
           status: stackRecord.status || "active",
         });
       }
     }
 
-    console.log(
-      `📊 构建调用树: 历史记录 ${this.callHistory.length} 个，调用栈 ${this.callStack.length} 个，总计 ${allRecords.length} 个`
-    );
+    console.log(`📊 构建调用树: 总计 ${allRecords.length} 个调用记录`);
 
+    if (allRecords.length === 0) {
+      return [];
+    }
+
+    // 创建简化的节点映射，避免循环引用
     const nodeMap = new Map<string, TreeNode>();
-    const rootNodes: TreeNode[] = [];
-
-    // 首先创建所有节点，包含更详细的信息
+    
+    // 创建所有节点，但暂时不设置children关系
     for (const record of allRecords) {
       const fileName = record.filePath.split("/").pop() || record.filePath;
+      // 简化args和returnValue，避免复杂对象引起的循环引用
+      const safeArgs = this.simplifyValue(record.args);
+      const safeReturnValue = this.simplifyValue(record.returnValue);
+      
       const node: TreeNode = {
         name: `${record.name}()`,
         value: record.duration || 0,
         duration: record.duration || 0,
         filePath: fileName,
-        children: [],
+        children: [], // 先设为空数组
         symbolSize: Math.max(8, Math.min(40, (record.duration || 0) / 5 + 10)),
         itemStyle: {
           color: record.error
@@ -377,98 +583,84 @@ class InlineTracer {
             ? "#52c41a"
             : "#1890ff",
         },
-        // 添加更多元数据用于工具提示
         callId: record.id,
         startTime: record.startTime,
         endTime: record.endTime || record.startTime,
         depth: record.depth,
-        args: record.args,
-        returnValue: record.returnValue,
+        args: safeArgs,
+        returnValue: safeReturnValue,
         status: record.status,
       };
       nodeMap.set(record.id, node);
     }
 
-    // 构建父子关系 - 使用parentId建立关系
+    // 建立父子关系 - 移除深度限制，允许显示所有调用
+    const rootNodes: TreeNode[] = [];
     const childIds = new Set<string>();
-    for (const record of allRecords) {
-      if (record.parentId) {
-        const parentNode = nodeMap.get(record.parentId);
-        const childNode = nodeMap.get(record.id);
-        if (parentNode && childNode) {
-          parentNode.children!.push(childNode);
-          childIds.add(record.id);
-        }
-      }
-    }
 
-    // 收集真正的根节点（没有parentId的节点）
     for (const record of allRecords) {
-      if (!record.parentId) {
-        const node = nodeMap.get(record.id);
-        if (node) {
+      const node = nodeMap.get(record.id);
+      if (!node) continue;
+
+      if (record.parentId) {
+        // 有父调用，添加到父节点
+        const parentNode = nodeMap.get(record.parentId);
+        if (parentNode && parentNode.children) {
+          parentNode.children.push(node);
+          childIds.add(record.id);
+        } else {
+          // 父调用不存在，可能是跨异步边界，作为根节点
+          console.log(`🔗 未找到父调用 ${record.parentId}，${record.name} 作为根节点`);
           rootNodes.push(node);
         }
+      } else {
+        // 没有父调用，是根节点
+        rootNodes.push(node);
       }
     }
 
-    // 如果没有真正的根节点，说明所有调用都有父调用，寻找深度最小的调用作为根
-    if (rootNodes.length === 0 && allRecords.length > 0) {
-      const minDepth = Math.min(...allRecords.map((r) => r.depth || 0));
-      const actualRoots = allRecords.filter((r) => (r.depth || 0) === minDepth);
-
-      console.log(`🌳 没有真正的根节点，使用最小深度 ${minDepth} 的 ${actualRoots.length} 个调用作为根`);
-
-      for (const rootRecord of actualRoots) {
-        const rootNode = nodeMap.get(rootRecord.id);
-        if (rootNode) {
-          rootNodes.push(rootNode);
-        }
-      }
-    }
-
-    // 对子节点按开始时间排序，保证调用顺序正确
-    function sortChildren(nodes: TreeNode[]) {
+    // 对所有子节点按开始时间排序
+    function sortChildrenByTime(nodes: TreeNode[]) {
       for (const node of nodes) {
         if (node.children && node.children.length > 0) {
           node.children.sort((a, b) => (a.startTime || 0) - (b.startTime || 0));
-          sortChildren(node.children);
+          sortChildrenByTime(node.children);
         }
       }
     }
 
-    // 对根节点也按开始时间排序
+    // 对根节点按开始时间排序
     rootNodes.sort((a, b) => (a.startTime || 0) - (b.startTime || 0));
-    sortChildren(rootNodes);
+    sortChildrenByTime(rootNodes);
 
-    console.log(
-      `🌳 构建调用树完成: ${allRecords.length} 个调用记录，${rootNodes.length} 个根节点`
-    );
+    console.log(`🌳 构建完成: ${rootNodes.length} 个根节点, ${childIds.size} 个子节点`);
 
-    // 如果仍然没有根节点，使用演示模式
-    if (rootNodes.length === 0) {
-      console.log(`🌳 回退到演示性调用树模式`);
-      return this.createDemoCallTree(allRecords);
+    // 如果没有根节点，可能所有调用都有问题的父子关系，回退到按深度分组
+    if (rootNodes.length === 0 && allRecords.length > 0) {
+      console.log(`🔧 回退到深度分组模式`);
+      return this.buildTreeByDepth(allRecords);
     }
 
-    // ECharts 的 tree 系列对多根节点支持较差，这里包装一个虚拟根节点
+    // 如果只有一个根节点，直接返回
+    if (rootNodes.length === 1) {
+      return rootNodes;
+    }
+
+    // 如果有多个根节点，创建虚拟根包装它们
     if (rootNodes.length > 1) {
-      const totalDuration = rootNodes.reduce(
-        (sum, n) => sum + (n.duration || 0),
-        0
-      );
+      const totalDuration = rootNodes.reduce((sum, n) => sum + (n.duration || 0), 0);
       const virtualRoot: TreeNode = {
-        name: `🌳 函数调用追踪总览 (${rootNodes.length}个根)`,
+        name: `🌳 函数调用总览 (${rootNodes.length}个入口)`,
         value: totalDuration,
         duration: totalDuration,
         filePath: "总览",
         children: rootNodes,
         symbolSize: 30,
         itemStyle: { color: "#1890ff" },
-        callId: "virtual_root_real",
+        callId: "virtual_root",
         startTime: Math.min(...rootNodes.map((n) => n.startTime || 0)),
         endTime: Math.max(...rootNodes.map((n) => n.endTime || 0)),
-        depth: 0,
+        depth: -1,
         status: "completed",
       };
       return [virtualRoot];
@@ -477,148 +669,138 @@ class InlineTracer {
     return rootNodes;
   }
 
-  // 创建演示性的调用树结构（当没有真实调用关系时）
-  private createDemoCallTree(history: CallRecord[]): TreeNode[] {
-    // 按文件分组
-    const fileGroups = new Map<string, CallRecord[]>();
-    for (const record of history) {
-      const fileName = record.filePath.split("/").pop() || record.filePath;
-      if (!fileGroups.has(fileName)) {
-        fileGroups.set(fileName, []);
-      }
-      fileGroups.get(fileName)!.push(record);
+  // 简化复杂值，避免循环引用
+  private simplifyValue(value: any, depth = 0): any {
+    if (depth > 3) return "[Max Depth]";
+    
+    if (value === null || value === undefined) {
+      return value;
     }
+    
+    if (typeof value === "function") {
+      return "[Function]";
+    }
+    
+    if (typeof value === "symbol") {
+      return "[Symbol]";
+    }
+    
+    if (typeof value !== "object") {
+      return value;
+    }
+    
+    if (Array.isArray(value)) {
+      if (value.length > 10) {
+        return `[Array(${value.length})]`;
+      }
+      return value.slice(0, 10).map(item => this.simplifyValue(item, depth + 1));
+    }
+    
+    // 对于对象，只保留基本属性
+    const result: any = {};
+    let count = 0;
+    for (const [key, val] of Object.entries(value)) {
+      if (count >= 5) {
+        result["..."] = `[${Object.keys(value).length - 5} more properties]`;
+        break;
+      }
+      
+      if (typeof val === "function" || key.startsWith("_")) {
+        continue;
+      }
+      
+      result[key] = this.simplifyValue(val, depth + 1);
+      count++;
+    }
+    
+    return result;
+  }
+
+  // 按调用深度构建树结构（回退方案）
+  private buildTreeByDepth(records: CallRecord[]): TreeNode[] {
+    // 按深度分组
+    const depthGroups = new Map<number, CallRecord[]>();
+    for (const record of records) {
+      const depth = record.depth || 0;
+      if (!depthGroups.has(depth)) {
+        depthGroups.set(depth, []);
+      }
+      depthGroups.get(depth)!.push(record);
+    }
+
+    // 从最小深度开始构建
+    const minDepth = Math.min(...Array.from(depthGroups.keys()));
+    const rootRecords = depthGroups.get(minDepth) || [];
 
     const rootNodes: TreeNode[] = [];
-
-    // 为每个文件创建一个根节点
-    for (const [fileName, records] of fileGroups) {
-      const totalDuration = records.reduce(
-        (sum, r) => sum + (r.duration || 0),
-        0
-      );
-      const fileNode: TreeNode = {
-        name: `📁 ${fileName}`,
-        value: totalDuration,
-        duration: totalDuration,
+    
+    for (const rootRecord of rootRecords) {
+      const fileName = rootRecord.filePath.split("/").pop() || rootRecord.filePath;
+      const rootNode: TreeNode = {
+        name: `${rootRecord.name}()`,
+        value: rootRecord.duration || 0,
+        duration: rootRecord.duration || 0,
         filePath: fileName,
         children: [],
-        symbolSize: Math.max(15, Math.min(50, totalDuration / 10 + 20)),
+        symbolSize: Math.max(10, Math.min(40, (rootRecord.duration || 0) / 5 + 12)),
         itemStyle: {
-          color: "#722ed1",
+          color: rootRecord.error ? "#ff4d4f" : rootRecord.status === "completed" ? "#52c41a" : "#1890ff",
         },
-        callId: `file_${fileName}`,
-        startTime: Math.min(...records.map((r) => r.startTime)),
-        endTime: Math.max(...records.map((r) => r.endTime || r.startTime)),
-        depth: 0,
-        status: "completed",
+        callId: rootRecord.id,
+        startTime: rootRecord.startTime,
+        endTime: rootRecord.endTime || rootRecord.startTime,
+        depth: rootRecord.depth,
+        args: this.simplifyValue(rootRecord.args),
+        returnValue: this.simplifyValue(rootRecord.returnValue),
+        status: rootRecord.status,
       };
 
-      // 按函数名分组
-      const functionGroups = new Map<string, CallRecord[]>();
-      for (const record of records) {
-        if (!functionGroups.has(record.name)) {
-          functionGroups.set(record.name, []);
-        }
-        functionGroups.get(record.name)!.push(record);
-      }
-
-      // 为每个函数创建子节点
-      for (const [functionName, funcRecords] of functionGroups) {
-        const funcTotalDuration = funcRecords.reduce(
-          (sum, r) => sum + (r.duration || 0),
-          0
-        );
-        const funcNode: TreeNode = {
-          name: `🔧 ${functionName}() (${funcRecords.length}次调用)`,
-          value: funcTotalDuration,
-          duration: funcTotalDuration,
-          filePath: fileName,
-          children: [],
-          symbolSize: Math.max(10, Math.min(40, funcTotalDuration / 5 + 12)),
-          itemStyle: {
-            color: funcRecords.some((r) => r.error) ? "#ff4d4f" : "#52c41a",
-          },
-          callId: `func_${functionName}_${fileName}`,
-          startTime: Math.min(...funcRecords.map((r) => r.startTime)),
-          endTime: Math.max(
-            ...funcRecords.map((r) => r.endTime || r.startTime)
-          ),
-          depth: 1,
-          status: "completed",
-        };
-
-        // 如果有多次调用，为每次调用创建子节点
-        if (funcRecords.length > 1) {
-          funcRecords.sort((a, b) => a.startTime - b.startTime);
-          funcRecords.forEach((record, index) => {
-            const callNode: TreeNode = {
-              name: `📞 调用 #${index + 1}`,
-              value: record.duration || 0,
-              duration: record.duration || 0,
-              filePath: fileName,
-              children: [],
-              symbolSize: Math.max(
-                8,
-                Math.min(25, (record.duration || 0) / 2 + 8)
-              ),
-              itemStyle: {
-                color: record.error
-                  ? "#ff4d4f"
-                  : record.status === "completed"
-                  ? "#1890ff"
-                  : "#faad14",
-              },
-              callId: record.id,
-              startTime: record.startTime,
-              endTime: record.endTime || record.startTime,
-              depth: 2,
-              args: record.args,
-              returnValue: record.returnValue,
-              status: record.status,
-            };
-            funcNode.children!.push(callNode);
-          });
-        }
-
-        fileNode.children!.push(funcNode);
-      }
-
-      // 按总执行时间排序子节点
-      fileNode.children!.sort((a, b) => (b.duration || 0) - (a.duration || 0));
-
-      rootNodes.push(fileNode);
-    }
-
-    // 按总执行时间排序文件节点
-    rootNodes.sort((a, b) => (b.duration || 0) - (a.duration || 0));
-
-    // 如果有多个文件节点，创建一个虚拟根节点包含所有文件
-    if (rootNodes.length > 1) {
-      const totalDuration = rootNodes.reduce(
-        (sum, node) => sum + (node.duration || 0),
-        0
-      );
-      const virtualRoot: TreeNode = {
-        name: `🌳 函数调用追踪总览 (${rootNodes.length}个文件)`,
-        value: totalDuration,
-        duration: totalDuration,
-        filePath: "总览",
-        children: rootNodes,
-        symbolSize: Math.max(20, Math.min(60, totalDuration / 20 + 30)),
-        itemStyle: {
-          color: "#1890ff",
-        },
-        callId: "virtual_root",
-        startTime: Math.min(...rootNodes.map((n) => n.startTime || 0)),
-        endTime: Math.max(...rootNodes.map((n) => n.endTime || 0)),
-        depth: 0,
-        status: "completed",
-      };
-      return [virtualRoot];
+      // 递归构建子节点（基于时间顺序和深度）
+      this.buildChildrenByDepthAndTime(rootNode, records, rootRecord.depth + 1, rootRecord.startTime, rootRecord.endTime || performance.now());
+      
+      rootNodes.push(rootNode);
     }
 
     return rootNodes;
+  }
+
+  // 根据深度和时间范围构建子节点
+  private buildChildrenByDepthAndTime(parentNode: TreeNode, allRecords: CallRecord[], targetDepth: number, startTime: number, endTime: number) {
+    const childRecords = allRecords.filter(record => 
+      record.depth === targetDepth && 
+      record.startTime >= startTime && 
+      record.startTime <= endTime
+    );
+
+    for (const childRecord of childRecords) {
+      const fileName = childRecord.filePath.split("/").pop() || childRecord.filePath;
+      const childNode: TreeNode = {
+        name: `${childRecord.name}()`,
+        value: childRecord.duration || 0,
+        duration: childRecord.duration || 0,
+        filePath: fileName,
+        children: [],
+        symbolSize: Math.max(8, Math.min(30, (childRecord.duration || 0) / 3 + 8)),
+        itemStyle: {
+          color: childRecord.error ? "#ff4d4f" : childRecord.status === "completed" ? "#52c41a" : "#1890ff",
+        },
+        callId: childRecord.id,
+        startTime: childRecord.startTime,
+        endTime: childRecord.endTime || childRecord.startTime,
+        depth: childRecord.depth,
+        args: this.simplifyValue(childRecord.args),
+        returnValue: this.simplifyValue(childRecord.returnValue),
+        status: childRecord.status,
+      };
+
+      // 递归构建更深层的子节点
+      this.buildChildrenByDepthAndTime(childNode, allRecords, targetDepth + 1, childRecord.startTime, childRecord.endTime || performance.now());
+      
+      parentNode.children!.push(childNode);
+    }
+
+    // 按开始时间排序子节点
+    parentNode.children!.sort((a, b) => (a.startTime || 0) - (b.startTime || 0));
   }
 
   // 生成ECharts可视化报告
@@ -722,29 +904,107 @@ class InlineTracer {
   // 安全的JSON序列化，避免循环引用
   private safeStringify(obj: any): string {
     const seen = new WeakSet();
-    return JSON.stringify(obj, (key, value) => {
-      if (typeof value === "object" && value !== null) {
-        if (seen.has(value)) {
-          return "[Circular Reference]";
-        }
-        seen.add(value);
+    
+    const stringify = (value: any, depth = 0): any => {
+      // 增加深度限制以支持更深的树结构
+      if (depth > 100) {
+        return "[Max Depth Exceeded]";
       }
-      // 过滤掉可能引起循环引用的复杂对象
-      if (key === "args" && Array.isArray(value)) {
-        return value.map((arg) => {
-          if (typeof arg === "object" && arg !== null) {
-            try {
-              JSON.stringify(arg);
-              return arg;
-            } catch {
-              return "[Complex Object]";
-            }
+      
+      if (value === null || value === undefined) {
+        return value;
+      }
+      
+      if (typeof value === "function") {
+        return "[Function]";
+      }
+      
+      if (typeof value === "symbol") {
+        return "[Symbol]";
+      }
+      
+      if (typeof value !== "object") {
+        return value;
+      }
+      
+      // 检查循环引用
+      if (seen.has(value)) {
+        return "[Circular Reference]";
+      }
+      
+      // 检查DOM元素等
+      if (value.nodeType) {
+        return "[DOM Element]";
+      }
+      
+      // 检查特殊对象类型
+      if (value instanceof Date) {
+        return value.toISOString();
+      }
+      
+      if (value instanceof Error) {
+        return `[Error: ${value.message}]`;
+      }
+      
+      // 跳过可能有问题的内置对象
+      if (value instanceof Map || value instanceof Set || value instanceof WeakMap || value instanceof WeakSet) {
+        return `[${value.constructor.name}]`;
+      }
+      
+      seen.add(value);
+      
+      try {
+        if (Array.isArray(value)) {
+          const result = value.slice(0, 50).map((item) => {
+            return stringify(item, depth + 1);
+          });
+          seen.delete(value);
+          if (value.length > 50) {
+            result.push(`[... ${value.length - 50} more items]`);
           }
-          return arg;
-        });
+          return result;
+        }
+        
+        const result: any = {};
+        let count = 0;
+        for (const [key, val] of Object.entries(value)) {
+          if (count >= 20) { // 增加对象属性数量限制
+            result["..."] = `[${Object.keys(value).length - 20} more properties]`;
+            break;
+          }
+          
+          // 跳过特定的可能有问题的属性
+          if (typeof val === "function" || 
+              key.startsWith("_") || 
+              key === "constructor" ||
+              key === "prototype" ||
+              key === "callStack" ||
+              key === "callHistory" ||
+              key === "__proto__") {
+            continue;
+          }
+          
+          result[key] = stringify(val, depth + 1);
+          count++;
+        }
+        
+        seen.delete(value);
+        return result;
+      } catch (error) {
+        seen.delete(value);
+        return "[Serialization Error]";
       }
-      return value;
-    }, 2);
+    };
+    
+    try {
+      return JSON.stringify(stringify(obj), null, 2);
+    } catch (error) {
+      return JSON.stringify({
+        error: "Failed to serialize object",
+        message: error instanceof Error ? error.message : String(error),
+        type: "SafeStringifyFallback"
+      }, null, 2);
+    }
   }
 
   // 生成HTML报告
